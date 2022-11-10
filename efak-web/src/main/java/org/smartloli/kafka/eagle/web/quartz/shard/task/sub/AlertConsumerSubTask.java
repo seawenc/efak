@@ -17,13 +17,16 @@
  */
 package org.smartloli.kafka.eagle.web.quartz.shard.task.sub;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.smartloli.kafka.eagle.api.im.IMFactory;
 import org.smartloli.kafka.eagle.api.im.IMService;
 import org.smartloli.kafka.eagle.api.im.IMServiceImpl;
+import org.smartloli.kafka.eagle.common.protocol.OffsetInfo;
 import org.smartloli.kafka.eagle.common.protocol.alarm.AlarmConfigInfo;
 import org.smartloli.kafka.eagle.common.protocol.alarm.AlarmConsumerInfo;
 import org.smartloli.kafka.eagle.common.protocol.alarm.AlarmMessageInfo;
+import org.smartloli.kafka.eagle.common.protocol.offsets.TopicOffsetInfo;
 import org.smartloli.kafka.eagle.common.util.CalendarUtils;
 import org.smartloli.kafka.eagle.common.util.JSONUtils;
 import org.smartloli.kafka.eagle.common.util.KConstants;
@@ -31,7 +34,9 @@ import org.smartloli.kafka.eagle.common.util.LoggerUtils;
 import org.smartloli.kafka.eagle.core.metrics.KafkaMetricsFactory;
 import org.smartloli.kafka.eagle.core.metrics.KafkaMetricsService;
 import org.smartloli.kafka.eagle.web.controller.StartupListener;
+import org.smartloli.kafka.eagle.web.service.OffsetService;
 import org.smartloli.kafka.eagle.web.service.impl.AlertServiceImpl;
+import org.smartloli.kafka.eagle.web.service.impl.OffsetServiceImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -75,8 +80,9 @@ public class AlertConsumerSubTask extends Thread {
                     params.put("tday", CalendarUtils.getCustomDate("yyyyMMdd"));
                     params.put("group", alarmConsumer.getGroup());
                     params.put("topic", alarmConsumer.getTopic());
-                    // real consumer lag
-                    long lag = alertService.queryLastestLag(params);
+                    // 需要修改为直接去查询kafka，而不是查询数据库
+//                    long lag = alertService.queryLastestLag(params);
+                    long lag =findQueryOffsetInfo(alarmConsumer);
                     // alert common info
                     AlarmMessageInfo alarmMsg = new AlarmMessageInfo();
                     try {
@@ -119,6 +125,21 @@ public class AlertConsumerSubTask extends Thread {
             }
         }
 
+        private long findQueryOffsetInfo(AlarmConsumerInfo alarmConsumer) {
+            OffsetService offsetService = StartupListener.getBean("offsetServiceImpl", OffsetServiceImpl.class);
+            TopicOffsetInfo topicOffset = new TopicOffsetInfo();
+            topicOffset.setCluster(alarmConsumer.getCluster());
+            topicOffset.setFormatter("kafka");
+            topicOffset.setGroup(alarmConsumer.getGroup());
+            topicOffset.setPageSize(1000);
+            topicOffset.setStartPage(0);
+            topicOffset.setTopic(alarmConsumer.getTopic());
+            List<OffsetInfo> logSizes = offsetService.getConsumerOffsets(topicOffset);
+            long lag = logSizes.stream().mapToLong(log -> log.getLag()).sum();
+            LoggerUtils.print(this.getClass()).info("Alarm consumer lag  "+lag+",params="+ JSON.toJSONString(topicOffset));
+            return lag;
+        }
+
         private void sendAlarmConsumerError(AlarmConfigInfo alarmConfing, AlarmConsumerInfo alarmConsumer, long lag, AlarmMessageInfo alarmMsg) {
             if (alarmConfing.getAlarmType().equals(KConstants.AlarmType.EMAIL)) {
                 alarmMsg.setTitle("EFAK - Alert Consumer Notice");
@@ -146,6 +167,18 @@ public class AlertConsumerSubTask extends Thread {
                 alarmMsg.setAlarmStatus("<font color=\"warning\">PROBLEM</font>");
                 IMServiceImpl im = new IMServiceImpl();
                 im.sendPostMsgByWeChat(alarmMsg.toWeChatMarkDown(), alarmConfing.getAlarmUrl());
+            } else if (alarmConfing.getAlarmType().equals(KConstants.AlarmType.Kafka)) {
+                alarmMsg.setTitle(alarmConfing.getAlarmGroup()+" alarm!");
+                JSONObject kafkaAlarmCtn=new JSONObject();
+                kafkaAlarmCtn.put("cluster",alarmConsumer.getCluster());
+                kafkaAlarmCtn.put("group",alarmConsumer.getGroup());
+                kafkaAlarmCtn.put("topic",alarmConsumer.getTopic());
+                kafkaAlarmCtn.put("current",lag);
+                kafkaAlarmCtn.put("max",alarmConsumer.getLag());
+                alarmMsg.setAlarmContent(kafkaAlarmCtn.toJSONString());
+                alarmMsg.setAlarmStatus("PROBLEM");
+                IMServiceImpl im = new IMServiceImpl();
+                im.sendPostMsgByKafka(alarmMsg.toJSON(), alarmConfing.getAlarmUrl());
             }
         }
 

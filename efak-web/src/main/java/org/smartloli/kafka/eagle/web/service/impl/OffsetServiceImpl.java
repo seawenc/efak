@@ -49,7 +49,7 @@ import java.util.Map.Entry;
  * Update by smartloli Sep 12, 2021
  * Settings prefixed with 'kafka.eagle.' will be deprecated, use 'efak.' instead.
  */
-@Service
+@Service("offsetServiceImpl")
 public class OffsetServiceImpl implements OffsetService {
 
     @Autowired

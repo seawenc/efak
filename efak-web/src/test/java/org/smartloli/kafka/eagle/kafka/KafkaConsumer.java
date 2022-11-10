@@ -21,7 +21,7 @@ public class KafkaConsumer {
         consumer.subscribe(Arrays.asList(topics.split(",")));
         System.out.println("topic:" + topics + ",props:" + JSON.toJSONString(properties));
         while (true) {
-            Thread.sleep(1000);
+            Thread.sleep(5000);
             ConsumerRecords<String, String> records = consumer.poll(100);
             for (ConsumerRecord<String, String> record : records) {
                 String value = record.value();
