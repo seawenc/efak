@@ -60,7 +60,7 @@ public class KafkaJob implements Job {
     }
 
 
-    private void sendKafkaMsg(String clusterAlias, String topic, String msg) {
+    public void sendKafkaMsg(String clusterAlias, String topic, String msg) {
         Properties props = new Properties();
         props.put(ConsumerConfig.GROUP_ID_CONFIG, KConstants.Kafka.EFAK_SYSTEM_GROUP);
         props.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, parseBrokerServer(clusterAlias));

@@ -51,6 +51,8 @@ public class ThreadConstants {
             put("org.smartloli.kafka.eagle.web.quartz.shard.task.sub.TopicThroughputByteInTask", WEIGHT_VIP2);
             put("org.smartloli.kafka.eagle.web.quartz.shard.task.sub.TopicThroughputByteOutTask", WEIGHT_VIP2);
             put("org.smartloli.kafka.eagle.web.quartz.shard.task.sub.ZookeeperClusterSubTask", WEIGHT_VIP2);
+            // 添加监控信息，每分钟将监控信息发往kafka
+            put("org.smartloli.kafka.eagle.web.quartz.shard.task.sub.monitor.MonitorTask", WEIGHT_VIP3);
         }
     };
 
