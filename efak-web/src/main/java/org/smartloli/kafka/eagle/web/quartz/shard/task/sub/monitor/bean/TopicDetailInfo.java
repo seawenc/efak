@@ -5,7 +5,9 @@ import org.smartloli.kafka.eagle.common.protocol.MetadataInfo;
 import org.smartloli.kafka.eagle.common.protocol.PartitionsInfo;
 import org.smartloli.kafka.eagle.common.util.LoggerUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,7 +18,6 @@ public class TopicDetailInfo {
     private String topic = "";
     private List<MetadataInfo> partitions = new ArrayList<>();
     private List<ConsumerInfo> consumers=new ArrayList<>();
-
 
     // 数据倾斜比例 看作broker使用率，如kafka集群9个broker，某topic有7个partition，则broker spread: 7 / 9 = 77%
     private long brokersSpread;
@@ -57,10 +58,15 @@ public class TopicDetailInfo {
         }
     }
 
+
     public void setRows1m(TopicDetailInfo topicDetail1mAgo) {
         if(topicDetail1mAgo!=null){
             this.rows1m = rows-topicDetail1mAgo.rows;
         }
+    }
+
+    public String getCollectTime() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
 
     public long getRows1m() {

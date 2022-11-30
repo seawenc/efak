@@ -42,7 +42,7 @@ public class TopicDetailService {
 
     private List<MetadataInfo> findPartitionMeta(String topicName){
         Map<String, Object> map = new HashMap<>();
-        map.put("start", 1);
+        map.put("start", 0);
         map.put("length", 500);
         List<MetadataInfo> metadatas = topicService.metadata(clusterAliass[0], topicName, map);
         return metadatas;

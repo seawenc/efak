@@ -32,7 +32,7 @@ public class TopicConsumersService {
             topicOffset.setFormatter("kafka");
             topicOffset.setGroup(consumer.getGroup());
             topicOffset.setPageSize(500);
-            topicOffset.setStartPage(1);
+            topicOffset.setStartPage(0);
             topicOffset.setTopic(topic);
             List<OffsetInfo> logSizes = offsetService.getConsumerOffsets(topicOffset);
             consumer.setOffsets(logSizes.stream().map(offset-> new MonitorOffsetInfo(offset)).collect(Collectors.toList()));
