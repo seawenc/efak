@@ -63,7 +63,7 @@ public class TopicDetailInfo {
         if(topicDetail1mAgo!=null){
             this.rows1m = rows-topicDetail1mAgo.rows;
             // 如果小于0,则说明有过期数据，清理了
-            this.rows1m = this.rows1m<0?0:this.rows1m;
+//            this.rows1m = this.rows1m<0?0:this.rows1m;
         }
     }
 
