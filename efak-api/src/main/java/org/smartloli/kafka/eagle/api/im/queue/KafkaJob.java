@@ -73,7 +73,6 @@ public class KafkaJob implements Job {
             ssl(props, clusterAlias);
         }
         new org.apache.kafka.clients.producer.KafkaProducer<>(props).send(new ProducerRecord<>(topic,msg));
-        LOG.info("sendMsg ->topic:" + topic+",msg="+msg);
     }
 
     private void sasl(Properties props, String clusterAlias) {
