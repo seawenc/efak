@@ -26,6 +26,7 @@ import org.smartloli.kafka.eagle.web.quartz.shard.task.sub.monitor.helper.ExecTi
 import org.smartloli.kafka.eagle.web.quartz.shard.task.sub.monitor.bean.TopicDetailInfo;
 import org.smartloli.kafka.eagle.web.quartz.shard.task.sub.monitor.service.TopicDetailService;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,13 +60,16 @@ public class MonitorTask extends Thread {
         // 计算1分钟内的指标
         calc1mQuota(topicDetailInfos);
         // 打印执行日志
-        log(cost, topicDetailInfos);
+        log(cost);
         // 发送到kafka
         sendToKafka(topicDetailInfos);
     }
 
-    private void log(ExecTimeCost cost, List<TopicDetailInfo> topicDetailInfos) {
-        LoggerUtils.print(this.getClass()).error("获得topic明细,耗时=" + cost.getFormat() + "," + JSON.toJSONString(topicDetailInfos));
+    private void log(ExecTimeCost cost) {
+        if(new Date().getMinutes()==0){
+            // 1小时打印一条日志
+            LoggerUtils.print(this.getClass()).info("获得topic明细,耗时=" + cost.getFormat());
+        }
     }
 
     private void sendToKafka(List<TopicDetailInfo> topicDetailInfos) {
