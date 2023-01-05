@@ -1,3 +1,8 @@
+# efak
+此fork项目解决efak一些bug，并增加以下功能：  
+* 1.并新增监控数据输出到kafka功能
+* 2.新增kafka报警通道
+
 [![Build Status](https://app.travis-ci.com/smartloli/EFAK.svg?branch=master)](https://app.travis-ci.com/smartloli/EFAK)
 ![](https://img.shields.io/badge/language-java-orange.svg)
 [![codebeat badge](https://codebeat.co/badges/4c141093-e55d-464d-87ce-7431cde81398)](https://codebeat.co/projects/github-com-smartloli-efak-master)
