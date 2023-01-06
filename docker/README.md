@@ -3,8 +3,8 @@
 
 ## 镜像制作
 ```shell script
-docker build -t seawenc/efak:3.0.5 .
-docker push seawenc/efak:3.0.5
+docker build -t seawenc/efak:3.0.6 .
+docker push seawenc/efak:3.0.6
 ```
 
 ## 用法：
@@ -14,7 +14,7 @@ docker run -d -p 8048:8048 \
 -v /tmp/logs:/opt/app/efak/logs \
 -v /data/workspace/my/efak-src/efak-web/src/main/resources/conf/system-config.properties:/opt/app/efak/conf/system-config.properties \
 -v /tmp/db:/opt/app/efak/db \
-seawenc/efak:3.0.5
+seawenc/efak:3.0.6
 ```
 访问：http://localhost:8048
 
