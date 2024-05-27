@@ -1,3 +1,4 @@
+# docker build -t seawenc/efak:3.0.7 .
 FROM seawenc/centos7fat:1.0
 MAINTAINER chengsheng(seawenc)
 
@@ -7,9 +8,10 @@ MAINTAINER chengsheng(seawenc)
 
 #RUN wget -c http://192.168.56.1:8000/efak-web-${VERSION}-bin.tar.gz（原始地址：https://github.com/smartloli/kafka-eagle-bin/archive/v3.0.1.tar.gz ）
 # 此包通过 git@github.com:sewenc/efak-src.git master源码打包
-ENV VERSION=3.0.6
-RUN cd /opt/app && curl -O http://192.168.56.1:8000/efak-web-${VERSION}-bin.tar.gz && \
-    tar -xzf efak-web-${VERSION}-bin.tar.gz && \
+ENV VERSION=3.0.7
+COPY /efak-web-${VERSION}-bin.tar.gz /opt/app/
+#RUN cd /opt/app && curl -O http://192.168.56.1:8000/efak-web-${VERSION}-bin.tar.gz && \
+RUN cd /opt/app && tar -xzf efak-web-${VERSION}-bin.tar.gz && \
     rm -rf efak-web-${VERSION}-bin.tar.gz && \
     mv efak-web-${VERSION} efak
 
