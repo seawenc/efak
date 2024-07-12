@@ -1,10 +1,24 @@
 ## 说明
 本项目主要用于hub.docker.com镜像制作（efak官方不提供docker镜像，因此自己做一个）
 
+```bash
+
+```
+
 ## 镜像制作
-```shell script
-docker build -t seawenc/efak:3.0.6 .
-docker push seawenc/efak:3.0.6
+```bash
+VERSION=3.0.9
+mvn versions:set -DnewVersion=${VERSION} -DgenerateBackupPoms=false
+rm -rf docker/*.tar.gz
+rm -rf efak-web/target
+mvn -pl efak-web package -Dmaven.test.skip=true
+mv efak-web/target/efak-web-${VERSION}-bin.tar.gz docker/
+
+cd docker
+docker build -t seawenc/efak:${VERSION} .
+docker push seawenc/efak:${VERSION}
+rm -rf /data/share/efak.gz
+docker save seawenc/efak:${VERSION} | gzip > /data/share/efak.gz
 ```
 
 ## 用法：

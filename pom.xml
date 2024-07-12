@@ -5,7 +5,7 @@
     <groupId>org.smartloli.kafka.eagle</groupId>
     <artifactId>efak</artifactId>
     <packaging>pom</packaging>
-    <version>${project.version}</version>
+    <version>3.0.9</version>
     <name>ke</name>
     <url>https://repo1.maven.org/maven2/</url>
 
